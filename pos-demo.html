@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>POS System Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F8FA;--surface:#fff;--ink:#111827;--muted:#6B7280;--line:#E5E7EB;
+ --accent:#0F766E;--ok:#15803D;--warn:#B45309;--danger:#B91C1C;
+ --shadow:0 1px 2px rgba(0,0,0,.04),0 12px 30px -12px rgba(0,0,0,.18);--r:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.5;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1140px;margin:0 auto;padding:0 18px}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;letter-spacing:-.01em}
+.btn{border:0;cursor:pointer;font-family:inherit;font-weight:600;font-size:15px;border-radius:10px;padding:11px 18px}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{filter:brightness(1.08)}
+.btn-ghost{background:transparent;border:1px solid var(--line);color:var(--ink)}
+.ribbon{position:fixed;top:14px;left:-42px;transform:rotate(-45deg);background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.14em;padding:5px 52px;z-index:60;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.bar{position:sticky;top:0;z-index:40;background:rgba(247,248,250,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:10px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:600}
+.mono{width:33px;height:33px;border-radius:9px;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:'Fraunces',serif;font-weight:700}
+.tabs{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px}
+.tabs button{border:0;background:transparent;font-family:inherit;font-weight:600;font-size:13px;padding:8px 15px;border-radius:999px;cursor:pointer;color:var(--muted)}
+.tabs button.on{background:var(--accent);color:#fff}
+.page{padding:22px 0 50px}
+.hidden{display:none!important}
+
+/* TILL */
+.till{display:grid;grid-template-columns:1fr 360px;gap:18px}
+@media(max-width:900px){.till{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.scanrow{display:flex;gap:8px;margin-bottom:14px}
+.scanrow input{flex:1;padding:12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:15px}
+.scanrow input:focus{outline:none;border-color:var(--accent)}
+.cats{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px}
+.cats button{border:1px solid var(--line);background:var(--bg);font-family:inherit;font-weight:600;font-size:13px;padding:7px 13px;border-radius:999px;cursor:pointer;color:var(--muted)}
+.cats button.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.prods{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:9px}
+.prod{border:1px solid var(--line);background:var(--bg);border-radius:11px;padding:12px 10px;cursor:pointer;text-align:left;font-family:inherit;transition:.12s}
+.prod:hover{border-color:var(--accent);background:#fff}
+.prod .n{font-weight:600;font-size:13px;line-height:1.3}
+.prod .p{font-family:'Fraunces',serif;font-weight:600;font-size:16px;margin-top:5px}
+.prod .s{font-size:11px;color:var(--muted);margin-top:2px}
+.prod .s.low{color:var(--danger);font-weight:600}
+/* basket */
+.basket{display:flex;flex-direction:column;min-height:460px}
+.basket h3{font-size:17px;margin-bottom:10px}
+.blist{flex:1;overflow:auto;max-height:300px}
+.bline{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.bline .bn{font-size:13px;font-weight:600}
+.bline .bs{font-size:11px;color:var(--muted)}
+.qty{display:flex;align-items:center;gap:7px}
+.qty button{width:24px;height:24px;border-radius:6px;border:1px solid var(--line);background:var(--bg);cursor:pointer;font-family:inherit;font-size:14px}
+.tot{border-top:2px solid var(--ink);margin-top:10px;padding-top:10px}
+.trow{display:flex;justify-content:space-between;font-size:14px;padding:3px 0}
+.trow.big{font-family:'Fraunces',serif;font-size:24px;font-weight:700;padding-top:6px}
+.pay{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.empty{color:var(--muted);font-size:14px;text-align:center;padding:40px 10px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:13px 22px;border-radius:11px;font-size:14px;font-weight:600;z-index:80;box-shadow:var(--shadow);display:none}
+.toast.show{display:block;animation:pop .3s ease}
+@keyframes pop{from{transform:translateX(-50%) translateY(10px);opacity:0}to{transform:translateX(-50%);opacity:1}}
+
+/* DASHBOARD */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:18px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px}
+.stat .l{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600}
+.stat .v{font-family:'Fraunces',serif;font-size:27px;font-weight:700;margin-top:3px}
+.stat .d{font-size:12px;color:var(--ok);font-weight:600}
+.two{display:grid;grid-template-columns:1.4fr 1fr;gap:16px}
+@media(max-width:900px){.two{grid-template-columns:1fr}}
+.chart{display:flex;align-items:flex-end;gap:9px;height:170px;padding-top:12px}
+.bar-c{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px}
+.bar-f{width:100%;background:linear-gradient(180deg,var(--accent),#14B8A6);border-radius:6px 6px 0 0;transition:height .5s ease}
+.bar-l{font-size:11px;color:var(--muted);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding:8px 6px;border-bottom:1px solid var(--line)}
+td{padding:9px 6px;border-bottom:1px solid var(--line)}
+.pill{font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px}
+.pill.ok{background:#DCFCE7;color:var(--ok)}
+.pill.low{background:#FEF3C7;color:var(--warn)}
+.pill.out{background:#FEE2E2;color:var(--danger)}
+.madeby{background:var(--ink);color:#fff;border-radius:20px;padding:30px;margin-top:26px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.madeby h3{font-size:24px;color:#fff;margin-bottom:5px}.madeby p{color:#C7CBD1;font-size:14px;max-width:44ch}
+footer{border-top:1px solid var(--line);padding:22px 0;color:var(--muted);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<div class="ribbon">DEMO</div>
+<div class="bar"><div class="wrap">
+  <div class="brand"><span class="mono" id="mono">S</span><span id="brandName">Your Store</span></div>
+  <div class="tabs">
+    <button class="on" id="tTill" onclick="show('till')">Till</button>
+    <button id="tDash" onclick="show('dash')">Dashboard</button>
+    <button id="tStock" onclick="show('stock')">Stock</button>
+  </div>
+</div></div>
+
+<div class="wrap page">
+  <!-- TILL -->
+  <div id="till">
+    <div class="till">
+      <div class="panel">
+        <div class="scanrow">
+          <input id="scan" placeholder="Scan barcode or search product..." oninput="filterProds()"/>
+          <button class="btn btn-ghost" onclick="randomScan()">Scan</button>
+        </div>
+        <div class="cats" id="cats"></div>
+        <div class="prods" id="prods"></div>
+      </div>
+      <div class="panel basket">
+        <h3>Current sale</h3>
+        <div class="blist" id="blist"></div>
+        <div class="tot" id="tot"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash" class="hidden">
+    <div class="stats" id="stats"></div>
+    <div class="two">
+      <div class="panel"><h3 style="font-size:17px;margin-bottom:2px">Sales this week</h3>
+        <div style="font-size:13px;color:var(--muted)">Daily takings</div>
+        <div class="chart" id="chart"></div></div>
+      <div class="panel"><h3 style="font-size:17px;margin-bottom:10px">Top sellers</h3>
+        <table><thead><tr><th>Product</th><th>Sold</th><th>Revenue</th></tr></thead><tbody id="topBody"></tbody></table></div>
+    </div>
+  </div>
+
+  <!-- STOCK -->
+  <div id="stock" class="hidden">
+    <div class="panel">
+      <h3 style="font-size:17px;margin-bottom:3px">Stock levels</h3>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px">Live count — updates with every sale at the till</div>
+      <table><thead><tr><th>Product</th><th>Category</th><th>Price</th><th>In stock</th><th>Status</th></tr></thead>
+      <tbody id="stockBody"></tbody></table>
+    </div>
+  </div>
+
+  <div class="madeby">
+    <div><h3>Want this running in your shop?</h3>
+      <p id="madebyText">This till, stock and reporting system was built as a demo. We build them custom around how your shop actually works.</p></div>
+    <a id="ctaLink" class="btn btn-primary" style="padding:14px 24px" href="#" target="_blank" rel="noopener">Get yours →</a>
+  </div>
+</div>
+<footer><div class="wrap"><span id="footName">Your Store</span><span>Demo built by <strong id="agencyFoot">Your Agency</strong></span></div></footer>
+<div class="toast" id="toast"></div>
+
+<script>
+const P=new URLSearchParams(location.search);
+const bizName=P.get('name')||"Your Store";
+const accent=P.get('accent'); if(accent)document.documentElement.style.setProperty('--accent','#'+accent.replace('#',''));
+const agency=P.get('agency')||"Your Agency"; const wa=P.get('wa');
+mono.textContent=(bizName.trim()[0]||'S').toUpperCase();brandName.textContent=bizName;
+footName.textContent=bizName;agencyFoot.textContent=agency;document.title=bizName+" · POS System";
+madebyText.textContent="This till, stock and reporting system was built as a demo for "+bizName+". We build them custom around how your shop actually works.";
+ctaLink.href=wa?"https://wa.me/"+wa.replace(/\D/g,'')+"?text="+encodeURIComponent("Hi! I saw the POS demo — I'd like one for "+bizName+"."):"#";
+
+let STOCK=[
+ {n:"Coca-Cola 500ml",c:"Drinks",p:1.35,s:48},{n:"Water 1L",c:"Drinks",p:0.95,s:62},
+ {n:"Red Bull 250ml",c:"Drinks",p:1.75,s:9},{n:"Orange Juice 1L",c:"Drinks",p:2.10,s:24},
+ {n:"Milk 2 Pints",c:"Chilled",p:1.45,s:31},{n:"Cheddar 200g",c:"Chilled",p:2.85,s:14},
+ {n:"Butter 250g",c:"Chilled",p:2.20,s:4},{n:"Eggs (6)",c:"Chilled",p:1.90,s:27},
+ {n:"White Bread",c:"Bakery",p:1.25,s:19},{n:"Croissant",c:"Bakery",p:0.85,s:0},
+ {n:"Crisps 45g",c:"Snacks",p:1.10,s:88},{n:"Chocolate Bar",c:"Snacks",p:0.90,s:120},
+ {n:"Biscuits Pack",c:"Snacks",p:1.60,s:36},{n:"Peanuts 100g",c:"Snacks",p:1.40,s:7},
+ {n:"Washing Powder",c:"Household",p:4.50,s:12},{n:"Bin Bags 20pk",c:"Household",p:2.30,s:22},
+ {n:"Toilet Roll 4pk",c:"Household",p:2.75,s:5},{n:"Newspaper",c:"Other",p:1.20,s:40}
+];
+const TOP=[["Chocolate Bar",412,"£370.80"],["Coca-Cola 500ml",298,"£402.30"],["Crisps 45g",265,"£291.50"],["Milk 2 Pints",210,"£304.50"],["White Bread",176,"£220.00"]];
+const WEEK=[["Mon",620],["Tue",545],["Wed",710],["Thu",680],["Fri",940],["Sat",1180],["Sun",805]];
+
+let basket={}, cat="All", q="";
+const cats=["All",...new Set(STOCK.map(x=>x.c))];
+const catsEl=document.getElementById('cats');
+cats.forEach(c=>{const b=document.createElement('button');b.textContent=c;if(c==="All")b.className="on";
+ b.onclick=()=>{cat=c;[...catsEl.children].forEach(x=>x.classList.toggle('on',x===b));renderProds();};catsEl.appendChild(b);});
+
+function renderProds(){
+  const el=document.getElementById('prods');el.innerHTML='';
+  STOCK.filter(x=>(cat==="All"||x.c===cat)&&x.n.toLowerCase().includes(q)).forEach(x=>{
+    const b=document.createElement('button');b.className='prod';
+    const out=x.s<=0, low=x.s>0&&x.s<=10;
+    b.innerHTML=`<div class="n">${x.n}</div><div class="p">£${x.p.toFixed(2)}</div>
+      <div class="s ${out||low?'low':''}">${out?'OUT OF STOCK':x.s+' in stock'}</div>`;
+    if(out)b.style.opacity=.45; else b.onclick=()=>add(x);
+    el.appendChild(b);
+  });
+}
+function filterProds(){q=document.getElementById('scan').value.toLowerCase();renderProds();}
+function randomScan(){const avail=STOCK.filter(x=>x.s>0);add(avail[Math.floor(Math.random()*avail.length)]);toast("Scanned");}
+function add(x){if(x.s<=0)return;basket[x.n]=basket[x.n]||{p:x.p,q:0};basket[x.n].q++;renderBasket();}
+function chg(n,d){basket[n].q+=d;if(basket[n].q<=0)delete basket[n];renderBasket();}
+function renderBasket(){
+  const bl=document.getElementById('blist'),tt=document.getElementById('tot');
+  const e=Object.entries(basket);
+  if(!e.length){bl.innerHTML='<div class="empty">No items yet.<br>Scan or tap a product.</div>';tt.innerHTML='';return;}
+  bl.innerHTML=e.map(([n,i])=>`<div class="bline"><div><div class="bn">${n}</div><div class="bs">£${i.p.toFixed(2)} each</div></div>
+    <div class="qty"><button onclick="chg('${n.replace(/'/g,"\\'")}',-1)">−</button><span>${i.q}</span>
+    <button onclick="chg('${n.replace(/'/g,"\\'")}',1)">+</button>
+    <strong style="margin-left:6px">£${(i.p*i.q).toFixed(2)}</strong></div></div>`).join('');
+  const sub=e.reduce((a,[,i])=>a+i.p*i.q,0), vat=sub*0.2/1.2;
+  tt.innerHTML=`<div class="trow"><span>Items</span><span>${e.reduce((a,[,i])=>a+i.q,0)}</span></div>
+    <div class="trow"><span>VAT (incl.)</span><span>£${vat.toFixed(2)}</span></div>
+    <div class="trow big"><span>Total</span><span>£${sub.toFixed(2)}</span></div>
+    <div class="pay"><button class="btn btn-ghost" onclick="pay('Cash')">Cash</button>
+    <button class="btn btn-primary" onclick="pay('Card')">Card</button></div>`;
+}
+function pay(m){
+  Object.entries(basket).forEach(([n,i])=>{const s=STOCK.find(x=>x.n===n);if(s)s.s=Math.max(0,s.s-i.q);});
+  const t=Object.entries(basket).reduce((a,[,i])=>a+i.p*i.q,0);
+  basket={};renderBasket();renderProds();renderStock();
+  toast(`${m} payment £${t.toFixed(2)} — stock updated`);
+}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),2200);}
+
+function renderStock(){
+  document.getElementById('stockBody').innerHTML=STOCK.map(x=>{
+    const cls=x.s<=0?'out':x.s<=10?'low':'ok', lbl=x.s<=0?'Out':x.s<=10?'Low':'OK';
+    return `<tr><td><strong>${x.n}</strong></td><td>${x.c}</td><td>£${x.p.toFixed(2)}</td>
+      <td>${x.s}</td><td><span class="pill ${cls}">${lbl}</span></td></tr>`;}).join('');
+}
+function renderDash(){
+  const low=STOCK.filter(x=>x.s>0&&x.s<=10).length, out=STOCK.filter(x=>x.s<=0).length;
+  document.getElementById('stats').innerHTML=`
+   <div class="stat"><div class="l">Today's takings</div><div class="v">£805</div><div class="d">▲ 12% vs last week</div></div>
+   <div class="stat"><div class="l">Transactions</div><div class="v">147</div><div class="d">▲ 8%</div></div>
+   <div class="stat"><div class="l">Avg basket</div><div class="v">£5.48</div><div class="d">▲ 4%</div></div>
+   <div class="stat"><div class="l">Low stock</div><div class="v" style="color:var(--warn)">${low}</div><div class="d" style="color:var(--danger)">${out} out of stock</div></div>`;
+  const max=Math.max(...WEEK.map(w=>w[1]));
+  document.getElementById('chart').innerHTML=WEEK.map(([d,v])=>
+    `<div class="bar-c"><div style="font-size:11px;font-weight:700">£${v}</div>
+     <div class="bar-f" style="height:${v/max*120}px"></div><div class="bar-l">${d}</div></div>`).join('');
+  document.getElementById('topBody').innerHTML=TOP.map(t=>
+    `<tr><td><strong>${t[0]}</strong></td><td>${t[1]}</td><td>${t[2]}</td></tr>`).join('');
+}
+function show(v){
+  ['till','dash','stock'].forEach(x=>document.getElementById(x).classList.toggle('hidden',x!==v));
+  tTill.classList.toggle('on',v==='till');tDash.classList.toggle('on',v==='dash');tStock.classList.toggle('on',v==='stock');
+  if(v==='dash')renderDash(); if(v==='stock')renderStock();
+}
+renderProds();renderBasket();
+</script>
+</body>
+</html>

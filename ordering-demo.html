@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Order Online Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#FAF8F4;--surface:#fff;--ink:#1A130D;--muted:#6E655B;--line:#EBE5DB;
+  --accent:#C2410C;--ok:#2F7D57;--shadow:0 1px 2px rgba(0,0,0,.04),0 14px 34px -14px rgba(0,0,0,.2);--r:16px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+h1,h2,h3{font-family:'Fraunces',Georgia,serif;letter-spacing:-.01em}
+.btn{border:0;cursor:pointer;font-family:inherit;font-weight:600;font-size:15px;border-radius:11px;padding:12px 20px;transition:transform .12s,filter .12s}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{filter:brightness(.94)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn-lg{padding:15px 26px;font-size:16px}
+.ribbon{position:fixed;top:14px;left:-42px;transform:rotate(-45deg);background:var(--accent);color:#fff;font-size:11px;font-weight:700;letter-spacing:.14em;padding:5px 52px;z-index:60;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.bar{position:sticky;top:0;z-index:40;background:rgba(250,248,244,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:12px;font-weight:600}
+.mono{width:34px;height:34px;border-radius:9px;background:var(--accent);color:#fff;display:grid;place-items:center;font-family:'Fraunces',serif;font-weight:700;font-size:18px}
+.cartbtn{position:relative}
+.badge{position:absolute;top:-7px;right:-7px;background:var(--ink);color:#fff;font-size:11px;font-weight:700;min-width:19px;height:19px;border-radius:10px;display:grid;place-items:center;padding:0 5px}
+.hero{padding:52px 0 34px}
+.eyebrow{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.14em;font-weight:600}
+.hero h1{font-size:clamp(38px,7vw,62px);line-height:1.03;margin:14px 0 12px;font-weight:600}
+.hero p{font-size:clamp(17px,2.4vw,20px);color:var(--muted);max-width:52ch}
+.hero-cta{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;align-items:center}
+.rating{font-size:14px;color:var(--muted)}.stars{color:var(--accent);letter-spacing:2px}
+.toggle{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:4px;margin:26px 0 4px}
+.toggle button{border:0;background:transparent;font-family:inherit;font-weight:600;font-size:14px;padding:9px 18px;border-radius:999px;cursor:pointer;color:var(--muted)}
+.toggle button.on{background:var(--accent);color:#fff}
+.cat{padding:30px 0 6px}
+.cat h2{font-size:clamp(22px,4vw,30px);margin-bottom:16px}
+.menu{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.item{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:14px}
+.item .info .n{font-weight:600}.item .info .d{font-size:13px;color:var(--muted)}
+.item .right{display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.item .p{font-family:'Fraunces',serif;font-weight:600;font-size:18px}
+.add{border:1px solid var(--accent);background:transparent;color:var(--accent);font-family:inherit;font-weight:600;font-size:14px;border-radius:9px;padding:7px 14px;cursor:pointer;transition:.12s}
+.add:hover{background:var(--accent);color:#fff}
+.madeby{background:var(--ink);color:#fff;border-radius:22px;padding:34px;margin:40px 0 60px;display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+.madeby h3{font-size:clamp(22px,3.4vw,28px);color:#fff;margin-bottom:6px}
+.madeby p{color:#C9C4BC;font-size:15px;max-width:44ch}
+footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* cart drawer */
+.overlay{position:fixed;inset:0;background:rgba(20,16,12,.5);z-index:70;display:none}
+.overlay.open{display:block}
+.drawer{position:absolute;top:0;right:0;height:100%;width:100%;max-width:440px;background:var(--bg);box-shadow:var(--shadow);display:flex;flex-direction:column;animation:slide .28s ease}
+@keyframes slide{from{transform:translateX(30px);opacity:.5}to{transform:none;opacity:1}}
+.dhead{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid var(--line)}
+.dhead h3{font-size:20px}
+.dbody{flex:1;overflow:auto;padding:16px 20px}
+.line{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.qty{display:flex;align-items:center;gap:10px}
+.qty button{width:28px;height:28px;border-radius:8px;border:1px solid var(--line);background:var(--surface);font-size:16px;cursor:pointer;font-family:inherit}
+.empty{text-align:center;color:var(--muted);padding:50px 20px}
+.dfoot{padding:18px 20px;border-top:1px solid var(--line);background:var(--surface)}
+.trow{display:flex;justify-content:space-between;margin-bottom:6px;font-size:14px}
+.trow.total{font-family:'Fraunces',serif;font-size:20px;font-weight:600;margin:10px 0 14px}
+.field{margin-bottom:12px}.field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--muted)}
+.field input{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;font-size:15px;background:var(--surface)}
+.field input:focus{outline:none;border-color:var(--accent)}
+.success{text-align:center;padding:40px 20px}
+.check{width:64px;height:64px;border-radius:50%;background:var(--ok);margin:0 auto 16px;display:grid;place-items:center}
+.check svg{width:30px;height:30px;stroke:#fff;stroke-width:3;fill:none}
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="ribbon">DEMO</div>
+<div class="bar"><div class="wrap">
+  <div class="brand"><span class="mono" id="mono">C</span><span id="brandName">Your Cafe</span></div>
+  <button class="btn btn-primary cartbtn" onclick="openCart()">Cart <span class="badge hidden" id="badge">0</span></button>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <span class="eyebrow" id="typeLabel">Cafe & Coffee</span>
+  <h1 id="heroTitle">Your Cafe</h1>
+  <p id="heroLede">Skip the queue — order ahead for pickup or get it delivered to your door. Ready in minutes.</p>
+  <div class="hero-cta">
+    <a href="#menu" class="btn btn-primary btn-lg">Start your order</a>
+    <span class="rating"><span class="stars">★★★★★</span> <span id="ratingText">4.8 · 640 reviews</span></span>
+  </div>
+  <div class="toggle" id="modeToggle">
+    <button class="on" data-mode="pickup" onclick="setMode('pickup')">Pickup</button>
+    <button data-mode="delivery" onclick="setMode('delivery')">Delivery</button>
+  </div>
+</div></header>
+
+<main id="menu"><div class="wrap" id="menuWrap"></div>
+  <div class="wrap"><div class="madeby">
+    <div><h3>Want your own ordering app?</h3><p id="madebyText">This order-ahead site was built as a demo. Get a live one, branded for your place.</p></div>
+    <a id="ctaLink" class="btn btn-primary btn-lg" href="#" target="_blank" rel="noopener">Get yours →</a>
+  </div></div>
+</main>
+<footer><div class="wrap"><span id="footName">Your Cafe</span><span>Demo built by <strong id="agencyFoot">Your Agency</strong></span></div></footer>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeCart()">
+  <div class="drawer">
+    <div class="dhead"><h3 id="cartTitle">Your order</h3><button class="btn btn-ghost" style="padding:7px 12px" onclick="closeCart()">✕</button></div>
+    <div class="dbody" id="cartBody"></div>
+    <div class="dfoot" id="cartFoot"></div>
+  </div>
+</div>
+
+<script>
+const MENU=[
+ ["Coffee & Drinks",[["Flat White","Double shot, silky milk","£3.40"],["Iced Matcha Latte","Ceremonial grade","£4.20"],
+   ["Cold Brew","12hr steep","£3.80"],["Chai Latte","House spice blend","£3.60"]]],
+ ["Brunch",[["Smashed Avo Toast","Sourdough, chilli, lime","£8.50"],["Shakshuka","Baked eggs, warm flatbread","£9.00"],
+   ["Buttermilk Pancakes","Maple, berries","£8.00"],["Halloumi Wrap","Grilled, harissa yoghurt","£7.50"]]],
+ ["Sweets",[["Pistachio Cookie","Warm, gooey","£3.20"],["Basque Cheesecake","By the slice","£4.50"],
+   ["Cinnamon Roll","Cream cheese glaze","£3.80"]]]
+];
+const P=new URLSearchParams(location.search);
+const bizName=P.get('name')||"Your Cafe";
+const typeLabel=P.get('type')==='restaurant'?"Restaurant":"Cafe & Coffee";
+const accent=P.get('accent'); if(accent)document.documentElement.style.setProperty('--accent','#'+accent.replace('#',''));
+const rating=P.get('rating')||"4.8 · 640 reviews";
+const agency=P.get('agency')||"Your Agency"; const wa=P.get('wa');
+const initial=bizName.trim()[0]?.toUpperCase()||"C";
+mono.textContent=initial;brandName.textContent=bizName;heroTitle.textContent=bizName;
+typeLabel.textContent=typeLabel; ratingText.textContent=rating; footName.textContent=bizName;
+agencyFoot.textContent=agency; document.title=bizName+" · Order online";
+madebyText.textContent="This order-ahead site + app was built as a demo for "+bizName+". Get a live one, fully branded for your place.";
+ctaLink.href = wa? "https://wa.me/"+wa.replace(/\D/g,'')+"?text="+encodeURIComponent("Hi! I saw the ordering demo — I'd like one for "+bizName+"."):"#";
+
+let mode='pickup', cart={};
+const priceNum=s=>parseFloat(s.replace('£',''));
+const menuWrap=document.getElementById('menuWrap');
+MENU.forEach(([cat,items])=>{
+  const sec=document.createElement('section');sec.className='cat';
+  sec.innerHTML=`<h2>${cat}</h2>`;
+  const grid=document.createElement('div');grid.className='menu';
+  items.forEach(it=>{
+    const el=document.createElement('div');el.className='item';
+    el.innerHTML=`<div class="info"><div class="n">${it[0]}</div><div class="d">${it[1]}</div></div>
+      <div class="right"><div class="p">${it[2]}</div><button class="add">Add +</button></div>`;
+    el.querySelector('.add').onclick=()=>addItem(it[0],priceNum(it[2]));
+    grid.appendChild(el);
+  });
+  sec.appendChild(grid);menuWrap.appendChild(sec);
+});
+function setMode(m){mode=m;[...document.querySelectorAll('#modeToggle button')].forEach(b=>b.classList.toggle('on',b.dataset.mode===m));renderCart();}
+function addItem(name,price){cart[name]=cart[name]||{price,q:0};cart[name].q++;updateBadge();openCart();}
+function updateBadge(){const n=Object.values(cart).reduce((a,c)=>a+c.q,0);
+  badge.textContent=n;badge.classList.toggle('hidden',n===0);}
+function openCart(){overlay.classList.add('open');renderCart();}
+function closeCart(){overlay.classList.remove('open');}
+function renderCart(){
+  const body=document.getElementById('cartBody'),foot=document.getElementById('cartFoot');
+  const entries=Object.entries(cart);
+  if(!entries.length){body.innerHTML='<div class="empty">Your cart is empty.<br>Add something tasty to get started.</div>';foot.innerHTML='';return;}
+  body.innerHTML=entries.map(([n,i])=>`<div class="line"><div><div style="font-weight:600">${n}</div>
+    <div style="font-size:13px;color:var(--muted)">£${i.price.toFixed(2)}</div></div>
+    <div class="qty"><button onclick="chg('${n.replace(/'/g,"\\'")}',-1)">−</button><span>${i.q}</span>
+    <button onclick="chg('${n.replace(/'/g,"\\'")}',1)">+</button></div></div>`).join('');
+  const sub=entries.reduce((a,[,i])=>a+i.price*i.q,0);
+  const fee=mode==='delivery'?2.50:0;
+  foot.innerHTML=`<div class="trow"><span>Subtotal</span><span>£${sub.toFixed(2)}</span></div>
+    <div class="trow"><span>${mode==='delivery'?'Delivery':'Pickup'}</span><span>${fee?'£'+fee.toFixed(2):'Free'}</span></div>
+    <div class="trow total"><span>Total</span><span>£${(sub+fee).toFixed(2)}</span></div>
+    <button class="btn btn-primary" style="width:100%" onclick="checkout()">Go to checkout</button>`;
+}
+function chg(n,d){cart[n].q+=d;if(cart[n].q<=0)delete cart[n];updateBadge();renderCart();}
+function checkout(){
+  const foot=document.getElementById('cartFoot'),body=document.getElementById('cartBody');
+  document.getElementById('cartTitle').textContent='Checkout';
+  body.innerHTML=`<div class="field"><label>Your name</label><input id="cn" placeholder="Alex Morgan"/></div>
+    <div class="field"><label>Mobile</label><input id="cp" placeholder="07xxx xxxxxx"/></div>
+    ${mode==='delivery'?'<div class="field"><label>Delivery address</label><input id="ca" placeholder="Street, city, postcode"/></div>':''}
+    <p style="font-size:13px;color:var(--muted)">${mode==='pickup'?'Ready for pickup in ~12 min.':'Estimated delivery ~35 min.'}</p>`;
+  foot.innerHTML=`<button class="btn btn-primary" style="width:100%" onclick="place()">Place order</button>`;
+}
+function place(){
+  const nm=(document.getElementById('cn')?.value||'You').split(' ')[0];
+  document.getElementById('cartBody').innerHTML=`<div class="success">
+    <div class="check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+    <h3 style="margin-bottom:6px">Order placed</h3>
+    <p style="color:var(--muted)">Thanks ${nm}! ${bizName} is preparing your ${mode==='pickup'?'pickup':'delivery'} order.</p>
+    <p style="font-size:12px;color:var(--muted);margin-top:10px">(Demo — no real order was placed.)</p></div>`;
+  document.getElementById('cartTitle').textContent='Confirmed';
+  document.getElementById('cartFoot').innerHTML='';cart={};updateBadge();
+}
+</script>
+</body>
+</html>

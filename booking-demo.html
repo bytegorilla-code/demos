@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Booking Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FAF9F6; --surface:#FFFFFF; --ink:#16130F; --muted:#6C665E;
+    --line:#E8E3DA; --accent:#C6A15B; --accent-ink:#3A2E12; --ok:#2F7D57;
+    --shadow:0 1px 2px rgba(0,0,0,.04), 0 12px 32px -12px rgba(0,0,0,.18);
+    --radius:16px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'Inter',system-ui,sans-serif;
+       line-height:1.55;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px}
+  h1,h2,h3,.serif{font-family:'Fraunces',Georgia,serif;font-weight:600;letter-spacing:-.01em}
+
+  /* top bar */
+  .bar{position:sticky;top:0;z-index:40;background:rgba(250,249,246,.86);
+       backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .bar .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:600}
+  .mono{width:34px;height:34px;border-radius:9px;background:var(--accent);color:#fff;
+        display:grid;place-items:center;font-family:'Fraunces',serif;font-weight:700;font-size:18px}
+  .btn{border:0;cursor:pointer;font-family:inherit;font-weight:600;font-size:15px;
+       border-radius:11px;padding:12px 20px;transition:transform .12s ease, filter .12s ease}
+  .btn:active{transform:translateY(1px)}
+  .btn-primary{background:var(--accent);color:#fff}
+  .btn-primary:hover{filter:brightness(.94)}
+  .btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+  .btn-lg{padding:15px 26px;font-size:16px}
+
+  /* hero */
+  .hero{padding:56px 0 40px}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);
+           text-transform:uppercase;letter-spacing:.14em;font-weight:600}
+  .dot{width:6px;height:6px;border-radius:50%;background:var(--accent)}
+  .hero h1{font-size:clamp(38px,7vw,64px);line-height:1.02;margin:18px 0 14px}
+  .hero p.lede{font-size:clamp(17px,2.4vw,20px);color:var(--muted);max-width:52ch}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px;align-items:center}
+  .rating{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--muted)}
+  .stars{color:var(--accent);letter-spacing:2px}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:30px}
+  .chip{background:var(--surface);border:1px solid var(--line);border-radius:999px;
+        padding:9px 15px;font-size:14px;color:var(--ink);display:flex;gap:8px;align-items:center}
+  .chip svg{width:15px;height:15px;stroke:var(--accent);fill:none;stroke-width:2}
+
+  /* sections */
+  section.block{padding:44px 0}
+  .sec-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:22px;flex-wrap:wrap}
+  .sec-head h2{font-size:clamp(24px,4vw,32px)}
+  .sec-head .kicker{font-size:13px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+
+  /* services */
+  .svc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px}
+  .svc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+       padding:20px;display:flex;flex-direction:column;gap:6px;transition:border-color .15s, box-shadow .15s;cursor:pointer}
+  .svc:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+  .svc .name{font-weight:600;font-size:16px}
+  .svc .dur{font-size:13px;color:var(--muted)}
+  .svc .price{margin-top:8px;font-family:'Fraunces',serif;font-size:22px;font-weight:600}
+  .svc .go{margin-top:12px;font-size:14px;font-weight:600;color:var(--accent)}
+
+  /* team */
+  .team{display:flex;gap:16px;flex-wrap:wrap}
+  .member{text-align:center;width:120px}
+  .avatar{width:84px;height:84px;border-radius:50%;margin:0 auto 10px;display:grid;place-items:center;
+          font-family:'Fraunces',serif;font-size:30px;font-weight:600;color:#fff}
+  .member .mn{font-weight:600;font-size:15px}
+  .member .mr{font-size:13px;color:var(--muted)}
+
+  /* reviews */
+  .rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+  .rev{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px}
+  .rev .stars{font-size:14px;margin-bottom:10px}
+  .rev p{font-size:15px;margin-bottom:12px}
+  .rev .who{font-size:13px;color:var(--muted);font-weight:600}
+
+  /* built-by CTA */
+  .madeby{background:var(--ink);color:#fff;border-radius:22px;padding:34px;margin:20px 0 60px;
+          display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap}
+  .madeby h3{font-size:clamp(22px,3.4vw,28px);color:#fff;margin-bottom:6px}
+  .madeby p{color:#C9C4BC;font-size:15px;max-width:44ch}
+  .madeby .btn-primary{white-space:nowrap}
+
+  footer{border-top:1px solid var(--line);padding:26px 0;color:var(--muted);font-size:13px;
+         display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+  /* demo ribbon */
+  .ribbon{position:fixed;top:14px;left:-42px;transform:rotate(-45deg);background:var(--accent);
+          color:#fff;font-size:11px;font-weight:700;letter-spacing:.14em;padding:5px 52px;z-index:60;
+          box-shadow:0 4px 12px rgba(0,0,0,.2)}
+
+  /* booking sheet */
+  .overlay{position:fixed;inset:0;background:rgba(20,16,12,.5);z-index:70;display:none;
+           align-items:flex-end;justify-content:center}
+  .overlay.open{display:flex}
+  .sheet{background:var(--bg);width:100%;max-width:520px;border-radius:22px 22px 0 0;
+         max-height:92vh;overflow:auto;box-shadow:var(--shadow);animation:rise .28s ease}
+  @keyframes rise{from{transform:translateY(24px);opacity:.4}to{transform:none;opacity:1}}
+  @media(min-width:560px){.overlay{align-items:center}.sheet{border-radius:22px}}
+  .sheet-head{position:sticky;top:0;background:var(--bg);padding:18px 20px 12px;
+              border-bottom:1px solid var(--line);z-index:2}
+  .steps{display:flex;gap:6px;margin-top:12px}
+  .step-pip{height:4px;flex:1;border-radius:2px;background:var(--line)}
+  .step-pip.on{background:var(--accent)}
+  .sheet-body{padding:18px 20px 26px}
+  .sheet h4{font-family:'Fraunces',serif;font-size:20px;margin-bottom:4px}
+  .sheet .sub{color:var(--muted);font-size:14px;margin-bottom:16px}
+  .opt{width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);
+       border-radius:12px;padding:15px;margin-bottom:10px;cursor:pointer;display:flex;
+       justify-content:space-between;align-items:center;font-family:inherit;font-size:15px;transition:border-color .12s}
+  .opt:hover{border-color:var(--accent)}
+  .opt.sel{border-color:var(--accent);box-shadow:0 0 0 2px rgba(198,161,91,.25)}
+  .opt .r{color:var(--muted);font-size:14px}
+  .days{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;margin-bottom:14px}
+  .day{min-width:64px;text-align:center;border:1px solid var(--line);background:var(--surface);
+       border-radius:12px;padding:10px 6px;cursor:pointer;font-size:13px}
+  .day.sel{border-color:var(--accent);background:var(--accent);color:#fff}
+  .day .dn{font-weight:600;font-size:15px;font-family:'Fraunces',serif}
+  .slots{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+  .slot{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:11px 6px;
+        text-align:center;cursor:pointer;font-size:14px;font-family:inherit}
+  .slot.sel{border-color:var(--accent);background:var(--accent);color:#fff}
+  .slot.off{opacity:.35;cursor:not-allowed;text-decoration:line-through}
+  .field{margin-bottom:12px}
+  .field label{display:block;font-size:13px;font-weight:600;margin-bottom:6px;color:var(--muted)}
+  .field input{width:100%;padding:13px;border:1px solid var(--line);border-radius:11px;
+               font-family:inherit;font-size:15px;background:var(--surface)}
+  .field input:focus{outline:none;border-color:var(--accent)}
+  .summary{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+  .summary .row{display:flex;justify-content:space-between;font-size:14px;padding:5px 0}
+  .summary .row .k{color:var(--muted)}
+  .sheet-foot{display:flex;gap:10px;margin-top:8px}
+  .sheet-foot .btn{flex:1}
+  .success{text-align:center;padding:30px 10px}
+  .check{width:66px;height:66px;border-radius:50%;background:var(--ok);margin:0 auto 16px;display:grid;place-items:center}
+  .check svg{width:32px;height:32px;stroke:#fff;stroke-width:3;fill:none}
+  .hidden{display:none!important}
+</style>
+</head>
+<body>
+<div class="ribbon">DEMO</div>
+
+<div class="bar"><div class="wrap">
+  <div class="brand"><span class="mono" id="mono">S</span><span id="brandName">Your Salon</span></div>
+  <button class="btn btn-primary" onclick="openSheet()">Book now</button>
+</div></div>
+
+<header class="hero"><div class="wrap">
+  <span class="eyebrow"><span class="dot"></span> <span id="typeLabel">Hair Salon</span></span>
+  <h1 id="heroTitle">Your Salon</h1>
+  <p class="lede" id="heroLede">Book your next appointment in under a minute — pick a service, choose your specialist, and lock in a time that works for you.</p>
+  <div class="hero-cta">
+    <button class="btn btn-primary btn-lg" onclick="openSheet()">Book an appointment</button>
+    <span class="rating"><span class="stars">★★★★★</span> <span id="ratingText">4.9 · 512 reviews</span></span>
+  </div>
+  <div class="chips">
+    <span class="chip"><svg viewBox="0 0 24 24"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg> Open today · 9:00–18:00</span>
+    <span class="chip"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 12-9 12s-9-5-9-12a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> <span id="cityChip">City centre</span></span>
+    <span class="chip"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg> Instant confirmation</span>
+  </div>
+</div></header>
+
+<section class="block"><div class="wrap">
+  <div class="sec-head"><h2>Services</h2><span class="kicker">Tap to book</span></div>
+  <div class="svc-grid" id="svcGrid"></div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="sec-head"><h2>Meet the team</h2><span class="kicker">Choose your specialist</span></div>
+  <div class="team" id="team"></div>
+</div></section>
+
+<section class="block"><div class="wrap">
+  <div class="sec-head"><h2>What clients say</h2><span class="kicker">Verified reviews</span></div>
+  <div class="rev-grid" id="revGrid"></div>
+</div></section>
+
+<div class="wrap">
+  <div class="madeby">
+    <div>
+      <h3>Like this? This could be your business.</h3>
+      <p id="madebyText">This booking site + app was built as a demo. Want a live one branded for your business?</p>
+    </div>
+    <a id="ctaLink" class="btn btn-primary btn-lg" href="#" target="_blank" rel="noopener">Get yours →</a>
+  </div>
+</div>
+
+<footer><div class="wrap" style="display:flex;justify-content:space-between;width:100%;gap:12px;flex-wrap:wrap">
+  <span id="footName">Your Salon</span>
+  <span>Demo built by <strong id="agencyFoot">Your Agency</strong></span>
+</div></footer>
+
+<!-- Booking sheet -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeSheet()">
+  <div class="sheet">
+    <div class="sheet-head">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="sheetBrand">Your Salon</strong>
+        <button class="btn btn-ghost" style="padding:7px 12px" onclick="closeSheet()">✕</button>
+      </div>
+      <div class="steps">
+        <span class="step-pip on" data-p="1"></span><span class="step-pip" data-p="2"></span>
+        <span class="step-pip" data-p="3"></span><span class="step-pip" data-p="4"></span>
+      </div>
+    </div>
+    <div class="sheet-body">
+      <!-- step 1 service -->
+      <div class="pane" data-pane="1">
+        <h4>Choose a service</h4><p class="sub">What are you booking in for?</p>
+        <div id="svcOpts"></div>
+      </div>
+      <!-- step 2 specialist -->
+      <div class="pane hidden" data-pane="2">
+        <h4>Choose a specialist</h4><p class="sub">Any preference, or pick “no preference”.</p>
+        <div id="proOpts"></div>
+      </div>
+      <!-- step 3 date/time -->
+      <div class="pane hidden" data-pane="3">
+        <h4>Pick a date & time</h4><p class="sub">Available slots update live.</p>
+        <div class="days" id="days"></div>
+        <div class="slots" id="slots"></div>
+      </div>
+      <!-- step 4 confirm -->
+      <div class="pane hidden" data-pane="4">
+        <h4>Confirm your booking</h4><p class="sub">We’ll text you a reminder the day before.</p>
+        <div class="summary" id="summary"></div>
+        <div class="field"><label>Your name</label><input id="fName" placeholder="e.g. Alex Morgan"/></div>
+        <div class="field"><label>Mobile number</label><input id="fPhone" placeholder="e.g. 07xxx xxxxxx"/></div>
+      </div>
+      <!-- success -->
+      <div class="pane hidden" data-pane="5">
+        <div class="success">
+          <div class="check"><svg viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></svg></div>
+          <h4>Booking confirmed</h4>
+          <p class="sub" id="successLine">See you soon!</p>
+          <p style="font-size:12px;color:var(--muted)">(This is a demo — no real appointment was made.)</p>
+        </div>
+      </div>
+
+      <div class="sheet-foot" id="foot">
+        <button class="btn btn-ghost hidden" id="backBtn" onclick="prev()">Back</button>
+        <button class="btn btn-primary" id="nextBtn" onclick="next()" disabled>Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- config by business type ----------
+const CATALOG = {
+  salon:{
+    label:"Hair Salon",
+    lede:"Book your next appointment in under a minute — pick a service, choose your stylist, and lock in a time that works for you.",
+    services:[["Cut & Blow Dry","45 min","£38"],["Colour / Balayage","2 hr","£95"],
+              ["Highlights","1 hr 30","£78"],["Blow Dry","30 min","£28"],
+              ["Toner & Gloss","40 min","£45"],["Consultation","15 min","Free"]],
+    team:[["Sophie","Senior Stylist"],["Mark","Colour Specialist"],["Priya","Stylist"],["No preference","First available"]]
+  },
+  barber:{
+    label:"Barbershop",
+    lede:"Book your chair in under a minute — pick your cut, choose your barber, and grab a slot that suits you.",
+    services:[["Skin Fade","40 min","£22"],["Haircut + Beard","45 min","£28"],
+              ["Beard Trim","20 min","£14"],["Hot Towel Shave","30 min","£25"],
+              ["Kids Cut","25 min","£15"],["Cut & Style","35 min","£20"]],
+    team:[["Sam","Master Barber"],["Romeo","Barber"],["Kasim","Barber"],["No preference","First available"]]
+  },
+  clinic:{
+    label:"Dental Clinic",
+    lede:"Book your visit in under a minute — choose a treatment, pick your clinician, and select a time that works for you.",
+    services:[["Check-up & Clean","30 min","£55"],["Hygiene Appointment","40 min","£70"],
+              ["Teeth Whitening","1 hr","£290"],["Invisalign Consult","30 min","Free"],
+              ["Emergency Appointment","30 min","£85"],["New Patient Exam","45 min","£65"]],
+    team:[["Dr Ahmed","Dentist"],["Dr Lewis","Orthodontist"],["Nadia","Hygienist"],["No preference","First available"]]
+  }
+};
+const REVIEWS=[
+  ["★★★★★","Booked in seconds on my phone — so much easier than calling. Reminder text was a nice touch.","— Hannah R."],
+  ["★★★★★","Loved being able to pick my specialist and see real available times. Smooth from start to finish.","— James T."],
+  ["★★★★★","Finally a local place I can book online at 11pm. Confirmed instantly. Brilliant.","— Aisha K."]
+];
+const AVATAR_COLORS=["#C6A15B","#3A6B5E","#7A5C8E","#9AA0A6"];
+
+// ---------- read URL params ----------
+const P=new URLSearchParams(location.search);
+const bizName = P.get('name') || "Your Salon";
+const type = (P.get('type')||'salon').toLowerCase();
+const cfg = CATALOG[type] || CATALOG.salon;
+const accent = P.get('accent');
+const city = P.get('city') || "City centre";
+const ratingTxt = P.get('rating') || "4.9 · 512 reviews";
+const agency = P.get('agency') || "Your Agency";
+const wa = P.get('wa'); // agency whatsapp number, digits only
+
+if(accent){ document.documentElement.style.setProperty('--accent', '#'+accent.replace('#','')); }
+
+// ---------- personalize static UI ----------
+const initial = bizName.trim()[0]?.toUpperCase() || "S";
+document.getElementById('mono').textContent = initial;
+document.getElementById('brandName').textContent = bizName;
+document.getElementById('heroTitle').textContent = bizName;
+document.getElementById('heroLede').textContent = cfg.lede;
+document.getElementById('typeLabel').textContent = cfg.label;
+document.getElementById('cityChip').textContent = city;
+document.getElementById('ratingText').textContent = ratingTxt;
+document.getElementById('sheetBrand').textContent = bizName;
+document.getElementById('footName').textContent = bizName;
+document.getElementById('agencyFoot').textContent = agency;
+document.title = bizName + " · Book online";
+document.getElementById('madebyText').textContent =
+  "This booking site + app was built as a demo for "+bizName+". Want a live one, fully branded, for your business?";
+const ctaHref = wa
+  ? "https://wa.me/"+wa.replace(/\D/g,'')+"?text="+encodeURIComponent("Hi! I saw the booking demo — I'd like one for "+bizName+".")
+  : "#";
+document.getElementById('ctaLink').href = ctaHref;
+
+// ---------- render services / team / reviews ----------
+const svcGrid=document.getElementById('svcGrid');
+cfg.services.forEach((s,i)=>{
+  const el=document.createElement('div');el.className='svc';
+  el.innerHTML=`<div class="name">${s[0]}</div><div class="dur">${s[1]}</div>
+    <div class="price">${s[2]}</div><div class="go">Book →</div>`;
+  el.onclick=()=>{ openSheet(); selectService(i); };
+  svcGrid.appendChild(el);
+});
+const team=document.getElementById('team');
+cfg.team.forEach((m,i)=>{
+  const el=document.createElement('div');el.className='member';
+  const c=AVATAR_COLORS[i%AVATAR_COLORS.length];
+  const ini=m[0]==='No preference'?'★':m[0][0];
+  el.innerHTML=`<div class="avatar" style="background:${c}">${ini}</div>
+    <div class="mn">${m[0]}</div><div class="mr">${m[1]}</div>`;
+  team.appendChild(el);
+});
+const revGrid=document.getElementById('revGrid');
+REVIEWS.forEach(r=>{const el=document.createElement('div');el.className='rev';
+  el.innerHTML=`<div class="stars">${r[0]}</div><p>${r[1]}</p><div class="who">${r[2]}</div>`;
+  revGrid.appendChild(el);});
+
+// ---------- booking flow state ----------
+let step=1, sel={svc:null,pro:null,day:null,slot:null};
+
+const svcOpts=document.getElementById('svcOpts');
+cfg.services.forEach((s,i)=>{
+  const b=document.createElement('button');b.className='opt';
+  b.innerHTML=`<span>${s[0]}<br><span class="r">${s[1]}</span></span><span class="r">${s[2]}</span>`;
+  b.onclick=()=>selectService(i);
+  svcOpts.appendChild(b);
+});
+const proOpts=document.getElementById('proOpts');
+cfg.team.forEach((m,i)=>{
+  const b=document.createElement('button');b.className='opt';
+  b.innerHTML=`<span>${m[0]}</span><span class="r">${m[1]}</span>`;
+  b.onclick=()=>{sel.pro=i;markSel(proOpts,i);enableNext(true);};
+  proOpts.appendChild(b);
+});
+
+function selectService(i){
+  sel.svc=i; markSel(svcOpts,i);
+  // if opened via a service card, jump to step 2
+  if(step===1){enableNext(true);}
+}
+function markSel(container,i){[...container.children].forEach((c,idx)=>c.classList.toggle('sel',idx===i));}
+
+// days + slots
+const DAYNAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const daysEl=document.getElementById('days'), slotsEl=document.getElementById('slots');
+function buildDays(){
+  daysEl.innerHTML='';
+  const today=new Date();
+  for(let d=0;d<7;d++){
+    const dt=new Date(today);dt.setDate(today.getDate()+d);
+    const el=document.createElement('div');el.className='day';
+    el.innerHTML=`<div>${d===0?'Today':DAYNAMES[dt.getDay()]}</div><div class="dn">${dt.getDate()}</div>`;
+    el.onclick=()=>{sel.day=d;[...daysEl.children].forEach(c=>c.classList.remove('sel'));
+      el.classList.add('sel');buildSlots(d);sel.slot=null;enableNext(false);};
+    daysEl.appendChild(el);
+  }
+}
+function buildSlots(dayIdx){
+  slotsEl.innerHTML='';
+  const times=['09:00','09:30','10:00','10:30','11:00','12:00','13:30','14:00','14:30','15:30','16:00','16:30','17:00'];
+  times.forEach((t,i)=>{
+    const el=document.createElement('div');
+    const off=((i*7+dayIdx*3)%5===0); // deterministic "taken" slots
+    el.className='slot'+(off?' off':'');el.textContent=t;
+    if(!off)el.onclick=()=>{sel.slot=t;[...slotsEl.children].forEach(c=>c.classList.remove('sel'));
+      el.classList.add('sel');enableNext(true);};
+    slotsEl.appendChild(el);
+  });
+}
+
+// nav
+const panes=[...document.querySelectorAll('.pane')];
+const pips=[...document.querySelectorAll('.step-pip')];
+const nextBtn=document.getElementById('nextBtn'), backBtn=document.getElementById('backBtn');
+function show(s){
+  step=s;
+  panes.forEach(p=>p.classList.toggle('hidden',+p.dataset.pane!==s));
+  pips.forEach(p=>p.classList.toggle('on',+p.dataset.p<=s));
+  backBtn.classList.toggle('hidden',s===1||s===5);
+  if(s===5){document.getElementById('foot').classList.add('hidden');return;}
+  document.getElementById('foot').classList.remove('hidden');
+  nextBtn.textContent = s===4?'Confirm booking':'Continue';
+  // validate current step
+  if(s===1)enableNext(sel.svc!==null);
+  if(s===2)enableNext(sel.pro!==null);
+  if(s===3){buildDays();enableNext(false);}
+  if(s===4){renderSummary();enableNext(true);}
+}
+function enableNext(ok){nextBtn.disabled=!ok;}
+function next(){
+  if(step<4){show(step+1);}
+  else{ // confirm
+    const nm=document.getElementById('fName').value.trim()||'You';
+    const s=cfg.services[sel.svc], day=sel.day===0?'today':`in ${sel.day} day(s)`;
+    document.getElementById('successLine').textContent=
+      `${bizName} has you down for ${s[0]} at ${sel.slot}, ${day}. Thanks, ${nm.split(' ')[0]}!`;
+    show(5);
+  }
+}
+function prev(){ if(step>1)show(step-1); }
+function renderSummary(){
+  const s=cfg.services[sel.svc], p=cfg.team[sel.pro];
+  document.getElementById('summary').innerHTML=`
+    <div class="row"><span class="k">Service</span><span>${s[0]} · ${s[2]}</span></div>
+    <div class="row"><span class="k">With</span><span>${p[0]}</span></div>
+    <div class="row"><span class="k">When</span><span>${sel.day===0?'Today':'Day +'+sel.day} · ${sel.slot}</span></div>
+    <div class="row"><span class="k">At</span><span>${bizName}</span></div>`;
+}
+
+function openSheet(){document.getElementById('overlay').classList.add('open');show(1);}
+function closeSheet(){document.getElementById('overlay').classList.remove('open');
+  sel={svc:null,pro:null,day:null,slot:null};markSel(svcOpts,-1);markSel(proOpts,-1);}
+</script>
+</body>
+</html>
