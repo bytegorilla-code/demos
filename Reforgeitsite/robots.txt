@@ -1,0 +1,7 @@
+# ReforgeIT
+# REPLACE the domain below if it changes.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://www.reforgeit.co.uk/sitemap.xml
