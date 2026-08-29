@@ -22,10 +22,13 @@ POST   = "B7 5QT"
 HOURS  = "Mon–Fri 9:00–18:00"
 YEAR   = "2025/26"
 
+# Taken straight off the live eBay store, so none of these are guesses.
 CAT = {
-    "laptops":  EBAY + "/Laptops/_i.html?store_cat=44082038012",
+    "laptops":  EBAY + "/Laptops-Netbooks/_i.html?_sacat=175672",
     "desktops": EBAY + "/Desktop-PC/_i.html?store_cat=44082043012",
-    "accs":     EBAY + "/Accessories/_i.html?store_cat=44082042012",
+    "aio":      EBAY + "/Desktops-All-in-Ones/_i.html?_sacat=171957",
+    "monitors": EBAY + "/Monitors-Projectors-Accs/_i.html?_sacat=162497",
+    "all":      EBAY,
 }
 
 NAV = [("Home","index.html"), ("Products","products.html"), ("About","about.html"),
@@ -216,23 +219,29 @@ def write(slug, html):
 # ======================================================================
 RANGES = [
     ("Laptops", CAT["laptops"], "laptop",
-     "Business-class ultrabooks and dependable everyday laptops from trusted brands.",
-     ["Core i5 and i7 options", "SSD storage", "Tested and warranty-backed"], "laptops.jpg"),
+     "Business-class laptops from Dell, HP and Lenovo — tested and ready to work.",
+     ["Core i5 and i7, 6th to 12th gen", "Up to 64GB RAM, 2TB SSD",
+      "Windows 11 Pro installed"], "laptops.jpg"),
     ("Desktop PCs", CAT["desktops"], "tower",
-     "Reliable towers for home offices, study setups and busy workplaces.",
-     ["Small-form and full tower", "Ready to plug in", "Upgrade paths available"], "desktop-pcs.jpg"),
-    ("All-in-One PCs", EBAY, "aio",
-     "Space-saving all-in-ones that keep desks tidy without compromising power.",
-     ["One-piece design", "Ideal for reception desks", "Less cable clutter"], "all-in-one.jpg"),
-    ("SSD &amp; Storage", CAT["accs"], "ssd",
-     "Solid-state drives and hard drives to make old machines feel brand new.",
-     ["SATA and NVMe drives", "Desktop and laptop sizes", "Instant speed boost"], "ssd-storage.jpg"),
-    ("RAM &amp; Memory", CAT["accs"], "ram",
-     "Memory upgrades that add speed and multitasking headroom for less.",
-     ["DDR3, DDR4 and DDR5", "Laptop SODIMM and desktop", "Cheapest useful upgrade"], "ram-memory.jpg"),
-    ("Accessories &amp; Cables", CAT["accs"], "acc",
-     "Chargers, docks, cables and the essential add-ons for your setup.",
-     ["Power adapters", "Docking stations", "Cables and adapters"], "accessories-cables.jpg"),
+     "Small-form-factor, mini and tower systems for the office, study or home desk.",
+     ["Dell OptiPlex, HP, Lenovo ThinkCentre", "SFF, mini and full tower",
+      "Windows 11 Pro installed"], "desktop-pcs.jpg"),
+    ("All-in-Ones", CAT["aio"], "aio",
+     "Space-saving all-in-ones that keep desks tidy without giving up power.",
+     ["Dell and HP 24-inch models", "Webcam and FHD display",
+      "One-piece, less cable clutter"], "all-in-one.jpg"),
+    ("Monitors", CAT["monitors"], "monitor",
+     "Screens from everyday office displays to specialist high-resolution panels.",
+     ["Widescreen and dual setups", "4K and QHD options",
+      "Stands and cables included"], "monitors.jpg"),
+    ("Workstations", CAT["all"], "ws",
+     "Higher-powered machines for design, engineering and heavy multitasking.",
+     ["HP and Dell workstations", "Dedicated graphics available",
+      "Up to 64GB RAM"], "workstations.jpg"),
+    ("Networking &amp; Accessories", CAT["all"], "acc",
+     "Networking kit, gadgets and the everyday extras that finish a setup.",
+     ["Networking equipment", "Chargers, docks and cables",
+      "Gadgets and add-ons"], "accessories-cables.jpg"),
 ]
 
 ICONS = {
@@ -242,6 +251,8 @@ ICONS = {
  "ssd":    '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M7 10h4M7 14h8"/>',
  "ram":    '<rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M6 16v3M10 16v3M14 16v3M18 16v3"/>',
  "acc":    '<path d="M6 8V5.5a2.5 2.5 0 015 0V8M13 8V5.5a2.5 2.5 0 015 0V8"/><rect x="4" y="8" width="16" height="7" rx="2"/><path d="M12 15v4"/>',
+ "monitor":'<rect x="2.5" y="4" width="19" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>',
+ "ws":     '<rect x="5" y="3" width="14" height="18" rx="2"/><path d="M8 7h8M8 11h8M8 15h4"/><circle cx="16" cy="15.5" r="1.2"/>',
 }
 
 def range_card(name, url, icon, blurb, bullets, pic):
@@ -278,17 +289,22 @@ TICK = ('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width
 def ticks(items):
     return "\n".join(f"      <li>{TICK} {i}</li>" for i in items)
 
+# Real feedback from the eBay seller profile. eBay masks buyer names, so the
+# usernames below are exactly as they appear publicly.
 REVIEWS = [
-  ("James C.", "Verified buyer",
-   "From the speed of the replies to how quickly it arrived, it couldn't have been better. "
-   "The laptop performed better than I expected from a refurbished machine — everything in "
-   "full working order and well packaged."),
-  ("Sara R.", "Verified buyer",
-   "Brilliant value and honest grading. The desktop was exactly as described, set up in "
-   "minutes and has been rock solid for months. I've since recommended them to two colleagues."),
-  ("Michael P.", "Verified buyer",
-   "Ordered an SSD upgrade and it turned up next day, perfectly packed. Great communication "
-   "and a fair price. This is now my go-to seller for anything tech related."),
+  ("g***t", "Verified purchase",
+   "Excellent seller! After I purchased a PC, I noticed the speaker wasn't working. I contacted "
+   "the seller and he responded quickly, even offering remote support to check the issue. When it "
+   "couldn't be resolved, he immediately arranged a replacement and kindly allowed me to keep using "
+   "the current PC until the new one arrives so my work wouldn't be disrupted."),
+  ("a***t", "Verified purchase",
+   "If it were possible to give more than 5 stars in this review, I would. This is an amazing "
+   "company, extremely efficient and very customer focused. Communication was superb, delivery was "
+   "fast and the quality of the product was excellent."),
+  ("s***_", "Verified purchase",
+   "Really good value for money. The quality of these refurbished items is incredible. They are in "
+   "excellent condition, they look and perform like they were brand new. Fast shipping and items "
+   "packaged very well."),
 ]
 
 def review_cards(cls_first="riseL"):
@@ -355,27 +371,28 @@ POSTS = [
       "but only fits machines designed for it.",
       "If you are unsure which your laptop takes, send us the model number and we will tell you."])]),
 
-  ("grading-explained.html", "What our A / B / C grading really means",
-   "Explained", "2 min", "grading-explained",
-   "Grading describes cosmetic condition only. Whatever the grade, the machine is tested to the "
-   "same standard and carries the same warranty.",
-   [("Grading is about looks, not performance",
-     ["This is the point people most often misunderstand. A grade tells you how a machine looks — "
-      "how much wear is on the casing and screen. It says nothing about how it runs.",
-      "Every machine we sell passes the same diagnostics before it is listed, whatever letter "
-      "ends up on it."]),
-    ("Grade A — Excellent",
-     ["Little to no visible wear. The kind of machine you would be happy to hand straight to a "
-      "client or put in front of a customer."]),
-    ("Grade B — Good",
-     ["Small scratches or scuffs on the casing from normal use. The screen is clear and unmarked. "
-      "This is the most popular grade, and usually the best balance of price and appearance."]),
-    ("Grade C — Fair",
-     ["Noticeable scratches, scuffs or dents. Priced accordingly, and the best value in the range "
-      "if the machine is going to sit on your own desk."]),
-    ("What every grade includes",
-     ["Full diagnostics, storage securely wiped, a clean operating system, and a 12-month "
-      "warranty. None of that changes with the grade."])]),
+  ("ebay-top-rated-seller.html", "What eBay Top-rated Seller status actually means",
+   "Explained", "3 min", "grading-explained",
+   "It is not a badge you can buy. eBay awards it on measured performance, and it can be taken "
+   "away just as easily.",
+   [("It has to be earned, every month",
+     ["eBay reviews seller accounts regularly and awards Top-rated status only to those meeting "
+      "strict thresholds on dispatch time, tracking, returns handling and defect rate.",
+      "It is not a paid placement or a badge you apply for. If standards slip, it is removed."]),
+    ("What the detailed ratings show",
+     ["Buyers score sellers separately on four things: how accurate the description was, delivery "
+      "time, communication, and whether postage was reasonable.",
+      "We hold 5.0 out of 5 on all four, averaged across roughly 600 buyers each over the last "
+      "twelve months."]),
+    ("Zero negatives in twelve months",
+     ["Out of 2,661 pieces of feedback in the last year, none were negative and none were neutral.",
+      "That record is public. You can open our eBay feedback profile and read every comment "
+      "yourself, including how we handled the few orders that did go wrong."]),
+    ("Why it matters when buying refurbished",
+     ["With used equipment, the seller matters as much as the hardware. Anyone can list a laptop; "
+      "what counts is what happens if something is not right when it arrives.",
+      "Between our 12-month warranty, free 30-day returns and eBay's Money Back Guarantee, you "
+      "are covered three ways."])]),
 
   ("why-refurbished-is-greener.html", "Why refurbished tech is the greener choice",
    "Sustainability", "3 min", "greener-choice",
@@ -417,35 +434,35 @@ def post_cards(limit=None):
     return "\n".join(out)
 
 
-GRADES = """
+# What every order includes — all four points are stated on the eBay store.
+INCLUDED = """
     <div class="gcards">
       <div class="gcard riseL">
-        <span class="gcard__l"><b>A</b><span>Excellent</span></span>
-        <h3>Looks close to new</h3>
-        <p>Little to no visible wear. The kind of machine you would be happy to hand straight to a client.</p>
+        <span class="gcard__l"><b>12</b><span>Months</span></span>
+        <h3>Seller warranty</h3>
+        <p>Every item carries a 12-month warranty from us, on top of your statutory rights.</p>
       </div>
       <div class="gcard rise">
-        <span class="gcard__l"><b>B</b><span>Good</span></span>
-        <h3>Light cosmetic wear</h3>
-        <p>Small scratches or scuffs on the casing from normal use. Screen clear and unmarked.</p>
+        <span class="gcard__l"><b>30</b><span>Days</span></span>
+        <h3>Free returns</h3>
+        <p>Changed your mind, or it isn't right for you? Send it back within 30 days at no cost.</p>
       </div>
       <div class="gcard riseR">
-        <span class="gcard__l"><b>C</b><span>Fair</span></span>
-        <h3>Visible marks</h3>
-        <p>Noticeable scratches, scuffs or dents. Priced accordingly — the best value in the range.</p>
+        <span class="gcard__l"><b>100</b><span>Per cent</span></span>
+        <h3>Positive feedback</h3>
+        <p>3,500 feedback and not a single negative or neutral in the last twelve months.</p>
       </div>
     </div>
 
     <div class="gnote zoom">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2l8 4v6c0 5-3.4 8.6-8 10-4.6-1.4-8-5-8-10V6z"/><path d="M9 12l2 2 4-4.5"/></svg>
       <div>
-        <b>Applies to every grade</b>
-        <p>Grading describes cosmetic condition only. Whatever the grade, the machine has passed the
-           same diagnostics, had its storage securely wiped, and carries the same 12-month warranty.</p>
+        <b>eBay Top-rated Seller</b>
+        <p>eBay awards this status to sellers who consistently deliver outstanding customer service.
+           Every purchase is also covered by eBay's Money Back Guarantee, so you are protected twice over.</p>
       </div>
     </div>
 """
-
 
 # ======================================================================
 #  PAGES
@@ -485,14 +502,14 @@ def page_products():
   </div>
 </section>
 
-<section class="band grades" id="grading" style="background:var(--white)">
+<section class="band grades" id="included" style="background:var(--white)">
   <div class="wrap">
     <div class="head rise">
-      <span class="eyebrow">Condition grading</span>
-      <h2>You know what you are getting before you buy.</h2>
-      <p>Every listing states its grade. The grade describes the casing and screen only — never the performance.</p>
+      <span class="eyebrow">What is included</span>
+      <h2>Every order is covered, twice over.</h2>
+      <p>Our own 12-month warranty and free returns, plus eBay's buyer protection on top.</p>
     </div>
-{GRADES}
+{INCLUDED}
   </div>
 </section>
 
@@ -554,20 +571,25 @@ def page_about():
       </ul>
     </div>
     <div class="panel riseR">
-      <h3 style="font-size:24px;margin-bottom:24px">By the numbers</h3>
-      <!-- CONFIRM these percentages with the client. -->
+      <h3 style="font-size:24px;margin-bottom:8px">Detailed seller ratings</h3>
+      <p style="color:var(--body-c);font-size:14.5px;margin-bottom:24px">
+        eBay's own scores, averaged over the last 12 months from around 600 buyers each.</p>
       <div class="bars">
         <div>
-          <div class="bar__top"><span>Positive feedback</span><b>100%</b></div>
+          <div class="bar__top"><span>Accurate description</span><b>5.0</b></div>
           <div class="bar__track"><span class="bar__fill" data-pct="100"></span></div>
         </div>
         <div>
-          <div class="bar__top"><span>Repeat &amp; returning buyers</span><b>90%</b></div>
-          <div class="bar__track"><span class="bar__fill" data-pct="90"></span></div>
+          <div class="bar__top"><span>Delivery time</span><b>5.0</b></div>
+          <div class="bar__track"><span class="bar__fill" data-pct="100"></span></div>
         </div>
         <div>
-          <div class="bar__top"><span>Orders dispatched on time</span><b>96%</b></div>
-          <div class="bar__track"><span class="bar__fill" data-pct="96"></span></div>
+          <div class="bar__top"><span>Communication</span><b>5.0</b></div>
+          <div class="bar__track"><span class="bar__fill" data-pct="100"></span></div>
+        </div>
+        <div>
+          <div class="bar__top"><span>Reasonable postage cost</span><b>5.0</b></div>
+          <div class="bar__track"><span class="bar__fill" data-pct="100"></span></div>
         </div>
       </div>
     </div>
@@ -577,9 +599,10 @@ def page_about():
 <section class="stats">
   <svg class="mark-wm" viewBox="0 0 343.15 350" aria-hidden="true"><use href="#ri-mark"/></svg>
   <div class="wrap stats__in">
-    <div class="stat rise"><b class="num" data-to="5400" data-suffix="+">0</b><span>Orders delivered</span></div>
+    <div class="stat rise"><b class="num" data-to="5500" data-suffix="+">0</b><span>Items sold</span></div>
     <div class="stat rise"><b class="num" data-to="100" data-suffix="%">0</b><span>Positive feedback</span></div>
-    <div class="stat rise"><b class="num" data-to="12" data-suffix=" mo">0</b><span>Warranty as standard</span></div>
+    <div class="stat rise"><b class="num" data-to="0">0</b><span>Negatives in 12 months</span></div>
+    <div class="stat rise"><b class="num" data-to="962">0</b><span>eBay followers</span></div>
   </div>
 </section>
 
@@ -632,11 +655,13 @@ FAQS = [
  ("Is my data safe on a machine you have refurbished?",
   "Yes. Storage is securely wiped before a clean operating system is installed, so nothing "
   "from the previous owner remains."),
- ("What does the A / B / C grade refer to?",
-  "Cosmetic condition only — the casing and screen. Performance is not graded, because every "
-  "machine has to pass the same tests regardless of how it looks."),
+ ("What condition are the items in?",
+  "Used and professionally refurbished. Every item is inspected, tested and cleaned before it is "
+  "listed, and each listing describes that item's actual condition."),
+ ("Can I return something if it is not right?",
+  "Yes. Free 30-day returns on every order, and eBay's Money Back Guarantee applies on top."),
  ("How long is the warranty?",
-  "Twelve months on every machine, whatever the grade."),
+  "Twelve months on every item, backed by our own seller warranty."),
  ("Where do you ship from?",
   "Our base at Metro Triangle in Birmingham. Orders are packed securely and tracked."),
 ]
@@ -684,7 +709,7 @@ def page_process():
       </div>
       <ul class="ticks">
 {ticks(["Multi-point diagnostics", "Storage securely wiped",
-        "Worn parts replaced", "Honest A / B / C grading",
+        "Worn parts replaced", "Free 30-day returns",
         "Clean operating system", "Securely packed for transit"])}
       </ul>
       <p style="margin-top:28px"><a class="btn btn--out" href="contact.html">
@@ -704,11 +729,11 @@ def page_process():
 <section class="band grades" style="background:var(--white)">
   <div class="wrap">
     <div class="head rise">
-      <span class="eyebrow">Condition grading</span>
-      <h2>What our A / B / C grades mean.</h2>
-      <p>Grading is about appearance, not performance. Here is exactly what each letter tells you.</p>
+      <span class="eyebrow">What is included</span>
+      <h2>What comes with every order.</h2>
+      <p>The same cover applies whether you spend £90 or £900.</p>
     </div>
-{GRADES}
+{INCLUDED}
   </div>
 </section>
 
@@ -770,19 +795,22 @@ def page_reviews():
           <span>See Our eBay Feedback</span> <span class="arw" aria-hidden="true">&#8599;</span></a></p>
     </div>
     <div class="panel riseR">
-      <!-- CONFIRM these percentages with the client. -->
       <div class="bars">
         <div>
-          <div class="bar__top"><span>Positive feedback</span><b>100%</b></div>
+          <div class="bar__top"><span>Accurate description</span><b>5.0</b></div>
           <div class="bar__track"><span class="bar__fill" data-pct="100"></span></div>
         </div>
         <div>
-          <div class="bar__top"><span>Repeat &amp; returning buyers</span><b>90%</b></div>
-          <div class="bar__track"><span class="bar__fill" data-pct="90"></span></div>
+          <div class="bar__top"><span>Delivery time</span><b>5.0</b></div>
+          <div class="bar__track"><span class="bar__fill" data-pct="100"></span></div>
         </div>
         <div>
-          <div class="bar__top"><span>Orders dispatched on time</span><b>96%</b></div>
-          <div class="bar__track"><span class="bar__fill" data-pct="96"></span></div>
+          <div class="bar__top"><span>Communication</span><b>5.0</b></div>
+          <div class="bar__track"><span class="bar__fill" data-pct="100"></span></div>
+        </div>
+        <div>
+          <div class="bar__top"><span>Reasonable postage cost</span><b>5.0</b></div>
+          <div class="bar__track"><span class="bar__fill" data-pct="100"></span></div>
         </div>
       </div>
     </div>
