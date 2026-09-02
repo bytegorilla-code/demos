@@ -107,7 +107,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
 <script>
 const COLORS=['#6D5AA6','#3E7C6B','#B0607C','#5E7C8B','#A9793E','#7A5C8E'];
-const PRODUCTS=[
+const DEFAULT_PRODUCTS=[
  {name:'Ceramic Mug',cat:'Home',price:16,sizes:null,desc:'Hand-glazed stoneware, 350ml.'},
  {name:'Linen Tote',cat:'Bags',price:24,sizes:null,desc:'Heavyweight natural linen, everyday carry.'},
  {name:'Wool Beanie',cat:'Apparel',price:22,sizes:['S','M','L'],desc:'Merino blend, soft and warm.'},
@@ -117,7 +117,31 @@ const PRODUCTS=[
  {name:'Leather Card Holder',cat:'Bags',price:34,sizes:null,desc:'Full-grain leather, slim profile.'},
  {name:'Gift Box',cat:'Gifts',price:45,sizes:null,desc:'Curated bundle of best-sellers.'}
 ];
+const CATALOGUES={
+ florist:[
+  {name:'Seasonal Bouquet',cat:'Bouquets',price:35,sizes:null,desc:"Hand-tied, whatever's freshest this week."},
+  {name:'Rose & Eucalyptus Bunch',cat:'Bouquets',price:42,sizes:null,desc:'Classic roses with soft seeded eucalyptus.'},
+  {name:'Wildflower Arrangement',cat:'Arrangements',price:48,sizes:null,desc:'Loose, natural-style seasonal mix in a vase.'},
+  {name:'Peony & Ranunculus Vase',cat:'Arrangements',price:55,sizes:null,desc:'Statement centrepiece, in-season blooms.'},
+  {name:'Potted Orchid',cat:'Plants',price:28,sizes:null,desc:'Long-flowering, low-maintenance houseplant.'},
+  {name:'Succulent Trio',cat:'Plants',price:22,sizes:null,desc:'Three mixed succulents in ceramic pots.'},
+  {name:'Letterbox Flower Gift Set',cat:'Gift Sets',price:32,sizes:null,desc:'Posted straight through the letterbox, no vase needed.'},
+  {name:'Flowers & Chocolates Box',cat:'Gift Sets',price:45,sizes:null,desc:'Bouquet paired with a box of Belgian chocolates.'}
+ ],
+ bakery:[
+  {name:'Sourdough Loaf',cat:'Breads',price:6,sizes:null,desc:'48-hour fermented, baked fresh daily.'},
+  {name:'Seeded Wholemeal Loaf',cat:'Breads',price:5.5,sizes:null,desc:'Stoneground flour, mixed seeds.'},
+  {name:'Chocolate Fudge Cake',cat:'Cakes',price:24,sizes:['6"','8"','10"'],desc:'Rich sponge, ganache finish. Serves 8-16.'},
+  {name:'Victoria Sponge',cat:'Cakes',price:20,sizes:['6"','8"'],desc:'Classic jam and buttercream sponge.'},
+  {name:'Almond Croissant',cat:'Pastries',price:3.5,sizes:null,desc:'Butter-laminated, almond frangipane.'},
+  {name:'Cinnamon Roll',cat:'Pastries',price:3,sizes:null,desc:'Fresh-baked, cream cheese glaze.'},
+  {name:'House Blend Coffee Beans',cat:'Coffee',price:9,sizes:['250g','1kg'],desc:'Locally roasted, medium roast.'},
+  {name:'Filter Coffee, 6-pack',cat:'Coffee',price:14,sizes:null,desc:'Single-origin drip bags, brew anywhere.'}
+ ]
+};
 const P=new URLSearchParams(location.search);
+const industry=(P.get('industry')||'').trim().toLowerCase();
+const PRODUCTS=CATALOGUES[industry]||DEFAULT_PRODUCTS;
 const bizName=P.get('name')||"Your Store";
 const accent=P.get('accent'); if(accent)document.documentElement.style.setProperty('--accent','#'+accent.replace('#',''));
 const agency=P.get('agency')||"Your Agency"; const wa=P.get('wa');
